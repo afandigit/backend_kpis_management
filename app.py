@@ -19,14 +19,14 @@ from datetime import datetime, timedelta
 from getE1Data import load_e1_data, get_unique_from_e1_dataset
 from getOEEData import load_OEE_data, get_unique_from_oee_dataset
 
-e1_dataset_file_path = '../DataSource/efficience.csv'
-oee_dataset_file_path = '../DataSource/oee.csv'
+e1_dataset_file_path = './efficience.csv'
+oee_dataset_file_path = './oee.csv'
 
 # files of prediction model and the data preprocessing objects
-random_forest_regressor_file_path = '../DataSource/dataScience/random_forest_regressor.pkl'
-scaler_file_path = '../DataSource/dataScience/scaler.pkl'
-encoder_file_path = '../DataSource/dataScience/encoder.pkl'
-labels_scaler_file_path = '../DataSource/dataScience/labels_scaler.pkl'
+random_forest_regressor_file_path = './dataScience/random_forest_regressor.pkl'
+scaler_file_path = './dataScience/scaler.pkl'
+encoder_file_path = './dataScience/encoder.pkl'
+labels_scaler_file_path = './dataScience/labels_scaler.pkl'
 
 
 
