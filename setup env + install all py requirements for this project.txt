@@ -1,0 +1,22 @@
+go to the BACKEND folder
+-------------------------------------------
+virtualenv env --python=python.3.11
+env\Scripts\activate
+-------------------------------------------
+pip install flask
+pip install flask_bcrypt
+pip install flask_session
+pip install flask_cors
+pip install mysql
+pip install mysql-connector-python
+pip install flask_socketio
+pip install pandas
+pip install joblib
+pip install redis
+pip install python-dotenv
+pip install flask_sqlalchemy
+pip install scikit-learn
+-------------------------------------------
+py app.py
+
+
