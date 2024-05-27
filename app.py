@@ -83,6 +83,10 @@ def query_mysql_database(query):
     return data
 
 
+@app.route('/')
+def home():
+    return "<h1>Welcome to Management KPIs Backend flask app :) ...</h1> <br><br><br>Author: AFANDI Soufiane<br><br><br>Github : https://github.com/afandigit"
+
 
 # ------------------------ KPI OEE : Urls ------------------------
 
