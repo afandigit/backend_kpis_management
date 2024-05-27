@@ -9,3 +9,4 @@ joblib
 redis
 python-dotenv
 flask_sqlalchemy
+gunicorn
