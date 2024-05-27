@@ -7,7 +7,6 @@ pip install flask
 pip install flask_bcrypt
 pip install flask_session
 pip install flask_cors
-pip install mysql
 pip install mysql-connector-python
 pip install flask_socketio
 pip install pandas

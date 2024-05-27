@@ -9,6 +9,7 @@ from threading import Lock
 from flask_socketio import SocketIO
 import json
 from time import sleep
+import os
 
 import pandas as pd
 import pickle
@@ -51,19 +52,17 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-MYSQL_HOST = 'localhost'
-MYSQL_USER = 'root'
-MYSQL_PASSWORD = 'root'
-MYSQL_DATABASE_NAME = "kpis_management"
-EFFICIENCE_MYSQL_TABLE_NAME = "efficience"
-OEE_MYSQL_TABLE_NAME = "oee"
+
+
+EFFICIENCE_MYSQL_TABLE_NAME =  os.environ['EFFICIENCE_MYSQL_TABLE_NAME']
+OEE_MYSQL_TABLE_NAME =  os.environ['OEE_MYSQL_TABLE_NAME']
 
 def get_mysql_connection():
     return mysql.connector.connect(
-        host=MYSQL_HOST,
-        user=MYSQL_USER,
-        password=MYSQL_PASSWORD,
-        database= MYSQL_DATABASE_NAME
+        host=os.environ['MYSQL_HOST'],
+        user=os.environ['MYSQL_USER'],
+        password=os.environ['MYSQL_PASSWORD'],
+        database= os.environ['MYSQL_DATABASE_NAME']
     )
 
 def is_float(string):
@@ -675,125 +674,6 @@ def get_efficience_data_from_mysql(description_filter = None, project = None):
     except mysql.connector.Error as error:
         # En cas d'erreur, renvoyez une réponse d'erreur au format JSON
         return jsonify({'error': str(error), 'code': 1})  # Custom backend code: error
-
-
-
-# def first_configuration_data_preprocessing(__X_dataset, encoder_object, scaler_object):
-
-#     X_dataset = __X_dataset.copy()
-#     X_dataset['Date'] = pd.to_datetime(X_dataset['Date'])
-#     X_dataset['Week'] = X_dataset['Date'].isocalendar().week
-#     X_dataset['Year'] = X_dataset['Date'].year
-#     X_dataset['Month'] = X_dataset['Date'].month
-#     X_dataset['Day'] = X_dataset['Date'].day
-#     X_dataset['Week Day'] = X_dataset['Date'].day_of_week
-#     X_dataset.drop(columns=['Date'], inplace=True)
-
-#     columns = ['Project', 'Responsible', 'Date', 'Headcount', 'Posted Hours', 'Hours of production', 'Absents', 'Registred Headcount', 'Week', 'Year', 'Month', 'Day', 'Week Day']
-#     X_dataset =  pd.DataFrame(X_dataset.to_numpy().reshape(1, -1), columns=columns)
-
-#     columns_to_normalize = ['Headcount', 'Posted Hours', 'Hours of production', 'Absents', 'Registred Headcount', 'Week',
-#                             'Year', 'Month', 'Day', 'Week Day']
-#     categorical_columns = ['Project', 'Responsible']
-
-#     X_dataset[columns_to_normalize] = scaler_object.transform(X_dataset[columns_to_normalize].to_numpy().reshape(1, -1))[0]
-
-#     one_hot_encoder_columns = ['Project_AFTER MARKET', 'Project_C1', 'Project_C3 EQ1',
-#        'Project_C3 EQ2', 'Project_C3 EQ3', 'Project_CNHI EQ1',
-#        'Project_CNHI EQ2', 'Project_HDEP LAD', 'Project_JCB',
-#        'Project_MAN', 'Project_MDEP', 'Project_PROTO',
-#        'Project_SMALL EQ1', 'Project_SMALL EQ2', 'Project_STEP E',
-#        'Project_VCE', 'Responsible_bartit anas', 'Responsible_bendriss',
-#        'Responsible_chakir', 'Responsible_faicel',
-#        'Responsible_marjany hayat', 'Responsible_rizki fatiha',
-#        'Responsible_sabri', 'Responsible_sadik hicham',
-#        'Responsible_sibari', 'Responsible_zaiti amine', 'Responsible_nan']
-
-#     one_hot_encoder_df = pd.DataFrame(data=0, columns=one_hot_encoder_columns, index=X_dataset.index, dtype=int)
-
-#     one_hot_encoder_df_2 = pd.concat([X_dataset[['Headcount', 'Posted Hours', 'Hours of production', 'Absents', 'Registred Headcount', 'Week', 'Year',
-#           'Month', 'Day', 'Week Day']], one_hot_encoder_df], axis=1)
-
-#     X_dataset.drop(columns=['Date'], inplace=True)
-    
-#     df_dummies = pd.get_dummies(X_dataset)
-#     df_dummies.drop(columns=['Headcount',	'Posted Hours',	'Hours of production',	'Absents',	'Registred Headcount',	'Week',	'Year',	'Month',	'Day',	'Week Day'], inplace=True)
-#     one_hot_encoder_df_2[df_dummies.columns[0]] = 1
-#     one_hot_encoder_df_2[df_dummies.columns[1]] = 1    
-#     return one_hot_encoder_df_2
-
-
-# @app.route('/sql/predict_efficience', methods=['GET'])
-# @app.route('/sql/predict_efficience/<project>', methods=['GET'])
-# def get_efficience_predicted_data_from_mysql(project = None):
-#     try:
-
-#         project_query = " where project='"+ project +"'" if project is not None else ""
-#         where_condition = project_query + " order by date DESC limit 1"
-#         efficience_data = query_mysql_database(f'SELECT Project, Responsible, Date, headcount, postedHours, HoursOfProduction, Absents, RegistredHeadcount FROM {EFFICIENCE_MYSQL_TABLE_NAME} '+where_condition)
-        
-#         # Transformez les données récupérées dans le format souhaité
-#         transformed_data = []
-#         for row in efficience_data:
-#             transformed_row = {
-#                 "Project": row[0],
-#                 "Responsible": row[1],
-#                 "Date": row[2],
-#                 "headcount": row[3],
-#                 "postedHours": row[4],
-#                 "HoursOfProduction": row[5],
-#                 "Absents": row[6],
-#                 "RegistredHeadcount": row[7]
-#             }
-#             transformed_data.append(transformed_row)
-
-#         del efficience_data
-#         new_row = transformed_data[0]
-#         new_row["Hours of production"] = new_row["HoursOfProduction"]
-#         new_row["Registred Headcount"] = new_row["RegistredHeadcount"]
-#         new_row["Headcount"] = new_row["headcount"]
-#         new_row["Posted Hours"] = new_row["postedHours"]
-#         new_row.pop("HoursOfProduction")
-#         new_row.pop("RegistredHeadcount")
-#         new_row.pop("headcount")
-#         new_row.pop("postedHours")
-
-#         # Créez une série pandas à partir du dictionnaire
-#         serie = pd.Series(new_row)
-#         # Réorganisez la série selon l'ordre souhaité des colonnes
-#         serie = serie[["Project", "Responsible", "Date", "Headcount", "Posted Hours", "Hours of production", "Absents", "Registred Headcount"]]
-        
-#         model_random_forest_regressor = pickle.load(open(random_forest_regressor_file_path, 'rb'))
-#         loaded_scaler_first_config = joblib.load(scaler_file_path)
-#         loaded_encoder_first_config = joblib.load(encoder_file_path)
-#         y_train_labels_scaler = joblib.load(labels_scaler_file_path)
-
-#         new_row_x_after_feature_enginnering = first_configuration_data_preprocessing(serie, loaded_encoder_first_config, loaded_scaler_first_config)
-#         y_pred_FC_1_scaled = model_random_forest_regressor.predict(new_row_x_after_feature_enginnering)
-#         y_pred_FC_1 = y_train_labels_scaler.inverse_transform(y_pred_FC_1_scaled.reshape(-1, 1)).reshape(y_pred_FC_1_scaled.shape[0],)
-
-#         # Renvoyez les données au format JSON
-#         return jsonify({'data': {
-#             "value": str(y_pred_FC_1[0]),
-#             "date": str(datetime.strptime(serie['Date'], '%Y-%m-%d') + timedelta(days=1)).split(' ')[0]
-#         }, 'code': 0})  # Custom backend code: data found
-
-#     except mysql.connector.Error as error:
-#         # En cas d'erreur, renvoyez une réponse d'erreur au format JSON
-#         return jsonify({'error': str(error), 'code': 1})  # Custom backend code: error
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @cross_origin
