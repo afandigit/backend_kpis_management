@@ -59,7 +59,7 @@ OEE_MYSQL_TABLE_NAME =  os.environ['OEE_MYSQL_TABLE_NAME']
 
 def get_mysql_connection():
     return mysql.connector.connect(
-        host=os.environ['MYSQL_HOST'],
+        host=f'{os.environ['MYSQL_HOST']}:{os.environ['MYSQLPORT']}',
         user=os.environ['MYSQL_USER'],
         password=os.environ['MYSQL_PASSWORD'],
         database= os.environ['MYSQL_DATABASE_NAME']
